@@ -1,0 +1,22 @@
+services:
+  backend:
+    build:
+      context: ./backend
+    environment:
+      PORT: "8000"
+      DB_URL: "${DB_URL}"
+      JWT_SECRET: "${JWT_SECRET}"
+      NASA_API_KEY: "${NASA_API_KEY}"
+      NODE_OPTIONS: "--dns-result-order=ipv4first"
+    ports:
+      - "8000:8000"
+
+  frontend:
+    build:
+      context: ./frontend
+    environment:
+      NEXT_PUBLIC_API_BASE_URL: "${NEXT_PUBLIC_API_BASE_URL}"
+    depends_on:
+      - backend
+    ports:
+      - "3000:3000"

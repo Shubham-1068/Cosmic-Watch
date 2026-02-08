@@ -1,0 +1,44 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id              String   @id @default(uuid())
+  name            String
+  email           String   @unique
+  passwordHash    String
+  createdAt       DateTime @default(now())
+  watchedAsteroids WatchedAsteroid[]
+}
+
+model WatchedAsteroid {
+  id              String   @id @default(uuid())
+  neoId           String
+  alertDistanceKm Float
+  alertDaysBefore Int
+  lastRiskLevel   String?  @default("Low")
+  userId          String
+  user            User     @relation(fields: [userId], references: [id])
+  createdAt       DateTime @default(now())
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  message   String
+  isRead    Boolean  @default(false)
+  userId    String
+  createdAt DateTime @default(now())
+}
+
+model ChatMessage {
+  id        String   @id @default(uuid())
+  userId    String
+  username  String
+  neoId     String?  // null = global chat
+  message   String
+  createdAt DateTime @default(now())
+}
