@@ -1,4 +1,4 @@
-# AstroTrack - NEO Monitoring Dashboard
+# Cosmic Watch - NEO Monitoring Dashboard
 
 A cutting-edge full-stack web platform for real-time asteroid and Near-Earth Object (NEO) tracking with advanced 3D visualization, risk assessment, and impact prediction.
 
