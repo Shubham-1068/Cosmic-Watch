@@ -162,7 +162,7 @@ This allows users to discuss specific asteroids and space events collaboratively
 ## Project Structure
 
 ```
-astrotrack/
+cosmic-watch/
 ├── app/                          # Next.js app directory
 │   ├── dashboard/page.tsx        # Main dashboard
 │   ├── login/page.tsx            # Authentication
