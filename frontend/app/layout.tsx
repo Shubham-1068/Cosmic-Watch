@@ -9,7 +9,7 @@ const _geist = Geist({ subsets: ['latin'] })
 const _geistMono = Geist_Mono({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'AstroTrack - NEO Monitoring Dashboard',
+  title: 'Cosmic Watch - NEO Monitoring Dashboard',
   description: 'Real-time asteroid tracking and Near-Earth Object monitoring with advanced risk assessment',
   metadataBase: new URL('https://example.com'),
   icons: {
@@ -17,13 +17,13 @@ export const metadata: Metadata = {
     apple: '/images/logo.png',
   },
   openGraph: {
-    title: 'AstroTrack - NEO Monitoring Dashboard',
+    title: 'Cosmic Watch - NEO Monitoring Dashboard',
     description: 'Real-time asteroid tracking and Near-Earth Object monitoring with advanced risk assessment',
     images: [{ url: '/images/logo.png', width: 512, height: 512, alt: 'AstroTrack logo' }],
   },
   twitter: {
     card: 'summary',
-    title: 'AstroTrack - NEO Monitoring Dashboard',
+    title: 'Cosmic Watch - NEO Monitoring Dashboard',
     description: 'Real-time asteroid tracking and Near-Earth Object monitoring with advanced risk assessment',
     images: ['/images/logo.png'],
   },
