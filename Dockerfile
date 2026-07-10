@@ -8,9 +8,9 @@ RUN corepack enable
 RUN pnpm install --no-frozen-lockfile --config.strict-peer-dependencies=false
 
 COPY frontend ./
-RUN npm run build
+RUN pnpm run build
 
-FROM node:20-alpine AS backend-builder
+FROM node:22-alpine AS backend-builder
 
 WORKDIR /app/backend
 
