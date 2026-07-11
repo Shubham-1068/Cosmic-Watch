@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import FloatingNavbar from '@/components/FloatingNavbar'
 import Link from 'next/link'
+import { SiteFooter } from '@/components/SiteChrome'
 
 interface WatchedAsteroid {
   id: string
@@ -113,7 +114,7 @@ export default function WatchlistPage() {
   }, [watched])
 
   return (
-    <div className="min-h-screen relative overflow-hidden bg-gradient-to-b from-background via-background to-slate-950/40 p-6 lg:p-8 pt-24">
+    <div className="app-surface min-h-screen relative overflow-hidden p-6 lg:p-8 pt-24">
       <FloatingNavbar />
 
       <div className="pointer-events-none absolute inset-0">
@@ -122,7 +123,7 @@ export default function WatchlistPage() {
         <div className="absolute top-1/3 left-1/2 h-56 w-56 rounded-full bg-accent/10 blur-3xl" />
       </div>
 
-      <div className="relative z-10">
+      <div className="relative z-10 mx-auto max-w-[1216px]">
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center justify-between">
@@ -245,6 +246,7 @@ export default function WatchlistPage() {
           </div>
         )}
       </div>
+      <div className="mt-20 -mx-6 lg:-mx-8"><SiteFooter /></div>
     </div>
   )
 }

@@ -50,38 +50,15 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="w-full h-screen bg-background flex items-center justify-center p-4 relative overflow-hidden">
-      {/* Enhanced Starfield Background */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {[...Array(80)].map((_, i) => {
-          const size = Math.random() * 2 + 1
-          const twinkleDelay = Math.random() * 3
-          return (
-            <div
-              key={`star-${i}`}
-              className="absolute bg-white rounded-full animate-twinkle"
-              style={{
-                width: `${size}px`,
-                height: `${size}px`,
-                left: `${Math.random() * 100}%`,
-                top: `${Math.random() * 100}%`,
-                animationDelay: `${twinkleDelay}s`,
-              }}
-            />
-          )
-        })}
-      </div>
-
-      <Card className="w-full max-w-md glass-strong border-border relative z-10 animate-slide-in-up">
+    <div className="auth-page">
+      <Card className="auth-panel w-full max-w-md">
         <CardHeader className="space-y-2 text-center">
           <div className="flex justify-center mb-4">
             <div className="w-16 h-16 rounded-lg bg-primary/10 flex items-center justify-center overflow-hidden">
               <img src="/images/logo.png" alt="Logo" className="w-full h-full object-contain" />
             </div>
           </div>
-          <CardTitle className="text-2xl font-bold text-foreground">
-            Cosmic Watch
-          </CardTitle>
+          <CardTitle className="display text-4xl">Welcome back</CardTitle>
           <CardDescription className="text-muted-foreground">
             Sign in to your account
           </CardDescription>
@@ -97,7 +74,7 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="glass border-border/30 text-foreground placeholder:text-muted-foreground focus:border-primary transition-colors"
+                className="text-foreground placeholder:text-muted-foreground focus:border-primary"
               />
             </div>
 
@@ -110,7 +87,7 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="glass border-border/30 text-foreground placeholder:text-muted-foreground focus:border-primary transition-colors"
+                className="text-foreground placeholder:text-muted-foreground focus:border-primary"
               />
             </div>
 

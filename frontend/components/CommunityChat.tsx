@@ -6,6 +6,7 @@ import { chatAPI, storageHelpers } from '@/lib/api'
 import FloatingNavbar from '@/components/FloatingNavbar'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import { SiteFooter } from './SiteChrome'
 import { Badge } from '@/components/ui/badge'
 import { Textarea } from '@/components/ui/textarea'
 import { Send, MessageCircle, Hash } from 'lucide-react'
@@ -161,7 +162,7 @@ export default function CommunityChat() {
   const currentUserId = storageHelpers.getUserId()
 
   return (
-    <div className="min-h-screen pt-24 pb-12 px-4 sm:px-6 lg:px-10 relative overflow-hidden">
+    <div className="app-surface min-h-screen pt-24 pb-12 px-4 sm:px-6 lg:px-10 relative overflow-hidden">
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute -top-32 left-1/2 h-64 w-[36rem] -translate-x-1/2 rounded-full bg-cyan-500/20 blur-3xl" />
         <div className="absolute bottom-10 right-10 h-48 w-48 rounded-full bg-emerald-500/20 blur-2xl" />
@@ -315,6 +316,7 @@ export default function CommunityChat() {
           </Card>
         </div>
       </div>
+      <div className="mt-20 -mx-4 sm:-mx-6 lg:-mx-10"><SiteFooter /></div>
     </div>
   )
 }

@@ -1,91 +1,34 @@
-"use client";
+'use client'
 
-import { useState, useEffect, useMemo } from 'react'
-import Image from 'next/image'
+import Link from 'next/link'
+import { ArrowRight, Orbit, Radar, ShieldCheck } from 'lucide-react'
+import { SiteFooter, SiteNav } from './SiteChrome'
+import AsteroidVisualizer from './AsteroidVisualizer'
 
-import { useRouter } from 'next/navigation'
-import AsteroidVisualizer from '@/components/AsteroidVisualizer'
-import { feedAPI, dataHelpers } from '@/lib/api'
-import { Asteroid } from '@/types/asteroid'
-import { ArrowRight } from 'lucide-react'
-
-export default function Page() {
-    const router = useRouter()
-    const [asteroids, setAsteroids] = useState<Asteroid[]>([])
-    const [selectedAsteroid, setSelectedAsteroid] = useState<Asteroid | null>(null)
-    const [isLoading, setIsLoading] = useState(true)
-
-    useEffect(() => {
-        const fetchAsteroids = async () => {
-            try {
-                setIsLoading(true)
-                const data = await feedAPI.getAll()
-                const items = (data.near_earth_objects || []) as unknown as Asteroid[]
-                setAsteroids(items)
-                if (items.length > 0) {
-                    setSelectedAsteroid(items[0])
-                }
-            } catch (err) {
-            } finally {
-                setIsLoading(false)
-            }
-        }
-
-        fetchAsteroids()
-    }, [])
-
-    const asteroidsProcessed = useMemo(() => {
-        return asteroids.map(a => ({
-            ...a,
-            diameter: a.estimatedDiameter?.kilometers?.estimated_diameter_max || 50,
-            velocity: a.close_approach_data?.[0]?.relative_velocity?.kilometers_per_second
-                ? parseFloat(a.close_approach_data[0].relative_velocity.kilometers_per_second)
-                : 15,
-            distance: a.close_approach_data?.[0]?.miss_distance?.kilometers
-                ? parseFloat(a.close_approach_data[0].miss_distance.kilometers)
-                : 1000000,
-            hazardLevel: dataHelpers.getHazardLevel(a),
-        })) as Asteroid[]
-    }, [asteroids])
-
-    const selectedProcessed = useMemo(() => {
-        if (!selectedAsteroid) return undefined
-        return {
-            ...selectedAsteroid,
-            diameter: selectedAsteroid.estimatedDiameter?.kilometers?.estimated_diameter_max || 50,
-            velocity: selectedAsteroid.close_approach_data?.[0]?.relative_velocity?.kilometers_per_second
-                ? parseFloat(selectedAsteroid.close_approach_data[0].relative_velocity.kilometers_per_second)
-                : 15,
-            distance: selectedAsteroid.close_approach_data?.[0]?.miss_distance?.kilometers
-                ? parseFloat(selectedAsteroid.close_approach_data[0].miss_distance.kilometers)
-                : 1000000,
-            hazardLevel: dataHelpers.getHazardLevel(selectedAsteroid),
-        } as Asteroid
-    }, [selectedAsteroid])
-    return (
-        <div className="w-full h-screen bg-gradient-to-br from-background via-background to-card/30 flex items-center justify-center relative overflow-hidden">
-            <div className="absolute top-4 left-4 z-50 bg-transparent">
-                <Image src="/images/logo.png" alt="Logo" width={66} height={66} className="object-contain" />
-            </div>
-            <button onClick={() => router.push('/login')} className="fixed top-7 right-4 z-50 cursor-pointer bg-primary hover:bg-primary/90 text-primary-foreground px-4 py-2 rounded-lg flex items-center gap-2 font-semibold">Get Started <ArrowRight /></button>
-            {!isLoading ? (
-                <AsteroidVisualizer
-                    asteroid={selectedProcessed}
-                    asteroids={asteroidsProcessed}
-                    selectedId={selectedAsteroid?.id}
-                    autoRotate={true}
-                />
-            ) : (
-
-                <div className="mt-6 flex flex-col items-center gap-2">
-                    <p className="text-white font-mono text-md tracking-[0.3em] uppercase">Scanning Deep Space</p>
-                    <div className="flex gap-1">
-                        <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-                        <div className="w-2 h-2 rounded-full bg-primary animate-pulse" style={{ animationDelay: '100ms' }} />
-                        <div className="w-2 h-2 rounded-full bg-primary animate-pulse" style={{ animationDelay: '200ms' }} />
-                    </div>
-                </div>
-            )}
-        </div>
-    )
+export default function Homepage() {
+  const features = [
+    { Icon: Radar, title: 'Live approach feed', copy: 'Follow the current stream of near-Earth objects and their approach windows.' },
+    { Icon: ShieldCheck, title: 'Risk, in context', copy: 'See relevant hazard signals with distance, size, and velocity alongside.' },
+    { Icon: Orbit, title: 'A shared record', copy: 'Keep important objects close and discuss observations with your team.' },
+  ]
+  return <main className="editorial-page">
+    <SiteNav />
+    <section className="hero-surface overflow-hidden"><div className="mx-auto grid min-h-[650px] max-w-[1280px] grid-cols-1 lg:grid-cols-2">
+      <div className="flex flex-col justify-center px-8 py-20 lg:px-16">
+        <p className="eyebrow">Near-Earth intelligence</p>
+        <h1 className="display max-w-[620px] text-[clamp(54px,7vw,88px)] leading-[1.02]">Know what’s moving through our sky.</h1>
+        <p className="mt-7 max-w-[500px] text-[18px] leading-7 text-[#554b42]">Cosmic Watch brings live asteroid approaches, risk signals, and observations into one considered monitoring workspace.</p>
+        <div className="mt-9 flex flex-wrap gap-3"><Link href="/register" className="button-dark">Start monitoring <ArrowRight size={16}/></Link><Link href="/dashboard" className="button-outline">Explore live data</Link></div>
+      </div>
+      <div className="hero-globe relative min-h-[440px] overflow-hidden bg-black">
+        <div className="absolute inset-0 z-10"><AsteroidVisualizer autoRotate /></div>
+        <p className="absolute bottom-9 left-9 font-mono text-xs tracking-[.22em] text-[#fff4d1]">OBSERVATION WINDOW · LIVE</p>
+      </div>
+    </div></section>
+    <section className="mx-auto max-w-[1280px] px-8 py-24 lg:px-16"><div className="grid gap-10 lg:grid-cols-[.8fr_1.2fr]"><div><p className="eyebrow">A clearer orbit</p><h2 className="display text-5xl leading-[1.08]">One calm view of a changing sky.</h2></div><p className="max-w-[570px] self-end text-lg leading-8 text-[#655c52]">The monitor is designed for the people who need to act on near-Earth object data. Essential context stays visible; the signal never gets lost in the interface.</p></div>
+      <div className="mt-14 grid gap-4 md:grid-cols-3">{features.map(({ Icon, title, copy }) => <article key={title} className="editorial-card p-8"><div className="mb-16 grid h-11 w-11 place-items-center rounded-lg bg-[#f8edcb] text-[#e84a20]"><Icon size={21}/></div><h3 className="text-xl font-semibold">{title}</h3><p className="mt-3 text-sm leading-6 text-[#655c52]">{copy}</p></article>)}</div>
+    </section>
+    <section className="mx-auto mb-24 max-w-[1216px] rounded-xl bg-[#f8edcb] px-8 py-16 text-center lg:px-16"><p className="eyebrow">Built for attention</p><h2 className="display cta-title mx-auto max-w-3xl text-5xl leading-tight">The next approach is easier to understand when the whole picture is in view.</h2><Link className="button-primary mt-8" href="/register">Create your workspace <ArrowRight size={16}/></Link></section>
+    <SiteFooter />
+  </main>
 }

@@ -1,12 +1,7 @@
 import React from "react"
 import type { Metadata } from 'next'
-import { Geist, Geist_Mono } from 'next/font/google'
-
 import './globals.css'
 import AlertNotifications from '@/components/AlertNotifications'
-
-const _geist = Geist({ subsets: ['latin'] })
-const _geistMono = Geist_Mono({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'Cosmic Watch - NEO Monitoring Dashboard',
@@ -36,6 +31,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark">
+      <head><script dangerouslySetInnerHTML={{ __html: "if(localStorage.getItem('cosmic-watch-theme')==='light')document.documentElement.classList.remove('dark')" }} /></head>
       <body className="font-sans antialiased text-foreground">
         {children}
         <AlertNotifications />

@@ -1,7 +1,7 @@
 'use client'
 
-import { Canvas } from '@react-three/fiber'
-import { PerspectiveCamera, OrbitControls, Stars, Html, Sphere } from '@react-three/drei'
+import { Canvas, useLoader } from '@react-three/fiber'
+import { PerspectiveCamera, OrbitControls, Stars, Html } from '@react-three/drei'
 import { useRef, useMemo } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
@@ -83,39 +83,104 @@ function AsteroidInstance({ asteroid, position, isSelected, freeze }: { asteroid
 
 function Earth() {
   const meshRef = useRef<THREE.Mesh>(null)
+  const cloudsRef = useRef<THREE.Mesh>(null)
+  const [surfaceMap, normalMap, specularMap, cloudsMap] = useLoader(THREE.TextureLoader, [
+    'https://threejs.org/examples/textures/planets/earth_atmos_2048.jpg',
+    'https://threejs.org/examples/textures/planets/earth_normal_2048.jpg',
+    'https://threejs.org/examples/textures/planets/earth_specular_2048.jpg',
+    'https://threejs.org/examples/textures/planets/earth_clouds_1024.png',
+  ])
 
-  const earthTexture = useMemo(() => {
+  const { earthTexture, cloudTexture } = useMemo(() => {
     const canvas = document.createElement('canvas')
-    canvas.width = 512
+    canvas.width = 1024
     canvas.height = 512
     const ctx = canvas.getContext('2d')!
 
-    // Create a simple Earth representation
-    ctx.fillStyle = '#1e3a8a'
-    ctx.fillRect(0, 0, 512, 512)
+    const ocean = ctx.createLinearGradient(0, 0, 0, canvas.height)
+    ocean.addColorStop(0, '#155477')
+    ocean.addColorStop(.48, '#2a92bb')
+    ocean.addColorStop(1, '#124c72')
+    ctx.fillStyle = ocean
+    ctx.fillRect(0, 0, canvas.width, canvas.height)
 
-    // Add continents
-    ctx.fillStyle = '#10b981'
-    ctx.beginPath()
-    ctx.arc(150, 200, 80, 0, Math.PI * 2)
-    ctx.fill()
+    // Subtle ocean currents add texture without making the sphere look illustrated.
+    for (let i = 0; i < 90; i++) {
+      ctx.strokeStyle = `rgba(119, 191, 204, ${0.015 + (i % 4) * 0.009})`
+      ctx.lineWidth = 1 + (i % 3)
+      ctx.beginPath()
+      const y = (i / 90) * canvas.height
+      ctx.moveTo(0, y)
+      ctx.bezierCurveTo(260, y - 30, 650, y + 32, canvas.width, y - 8)
+      ctx.stroke()
+    }
 
-    ctx.beginPath()
-    ctx.arc(350, 150, 60, 0, Math.PI * 2)
-    ctx.fill()
+    const land = '#79a85f'
+    const coast = '#b9d47a'
+    const continent = (points: Array<[number, number]>) => {
+      ctx.beginPath()
+      points.forEach(([x, y], index) => index ? ctx.lineTo(x, y) : ctx.moveTo(x, y))
+      ctx.closePath()
+      ctx.fillStyle = land
+      ctx.fill()
+      ctx.strokeStyle = coast
+      ctx.lineWidth = 2
+      ctx.stroke()
+    }
+    // Simplified, geographically placed continent silhouettes for an Earth-like surface.
+    continent([[130,105],[180,68],[252,78],[285,125],[260,167],[222,182],[202,232],[168,251],[143,210],[150,166],[115,140]])
+    continent([[258,238],[300,262],[320,315],[306,388],[280,444],[250,400],[235,326]])
+    continent([[438,110],[490,83],[550,101],[580,145],[550,182],[530,235],[482,229],[454,188]])
+    continent([[525,235],[570,258],[596,318],[563,396],[521,432],[493,365],[498,298]])
+    continent([[589,108],[690,83],[810,112],[874,161],[830,210],[742,202],[670,232],[612,190]])
+    continent([[798,286],[855,302],[881,346],[844,382],[790,351]])
+    continent([[82,278],[128,267],[150,304],[122,334],[76,320]])
+    ctx.fillStyle = 'rgba(235,246,238,.85)'
+    ctx.fillRect(0, 0, canvas.width, 28)
+    ctx.fillRect(0, canvas.height - 30, canvas.width, 30)
 
-    ctx.beginPath()
-    ctx.arc(300, 350, 70, 0, Math.PI * 2)
-    ctx.fill()
-
-    return new THREE.CanvasTexture(canvas)
+    const cloudCanvas = document.createElement('canvas')
+    cloudCanvas.width = canvas.width
+    cloudCanvas.height = canvas.height
+    const cloudCtx = cloudCanvas.getContext('2d')!
+    for (let i = 0; i < 55; i++) {
+      const x = (i * 149) % cloudCanvas.width
+      const y = (i * 83) % cloudCanvas.height
+      cloudCtx.fillStyle = `rgba(245, 250, 246, ${0.035 + (i % 5) * .012})`
+      cloudCtx.beginPath()
+      cloudCtx.ellipse(x, y, 35 + (i % 4) * 16, 8 + (i % 3) * 8, -0.22, 0, Math.PI * 2)
+      cloudCtx.fill()
+    }
+    const texture = new THREE.CanvasTexture(canvas)
+    texture.colorSpace = THREE.SRGBColorSpace
+    const clouds = new THREE.CanvasTexture(cloudCanvas)
+    clouds.colorSpace = THREE.SRGBColorSpace
+    return { earthTexture: texture, cloudTexture: clouds }
   }, [])
 
+  useFrame((_, delta) => {
+    if (meshRef.current) meshRef.current.rotation.y += delta * 0.045
+    if (cloudsRef.current) cloudsRef.current.rotation.y += delta * 0.06
+  })
+
+  surfaceMap.colorSpace = THREE.SRGBColorSpace
+  cloudsMap.colorSpace = THREE.SRGBColorSpace
+
   return (
-    <mesh ref={meshRef} castShadow>
-      <sphereGeometry args={[1, 64, 64]} />
-      <meshPhongMaterial map={earthTexture} shininess={5} />
-    </mesh>
+    <group>
+      <mesh ref={meshRef} castShadow>
+        <sphereGeometry args={[1, 96, 96]} />
+        <meshPhongMaterial map={surfaceMap} normalMap={normalMap} specularMap={specularMap} shininess={7} specular="#8ab9c7" emissive="#17465f" emissiveIntensity={0.28} />
+      </mesh>
+      <mesh ref={cloudsRef}>
+        <sphereGeometry args={[1.012, 96, 96]} />
+        <meshPhongMaterial map={cloudsMap} transparent opacity={.3} depthWrite={false} />
+      </mesh>
+      <mesh scale={[1.045, 1.045, 1.045]}>
+        <sphereGeometry args={[1, 64, 64]} />
+        <meshBasicMaterial color="#5bb7df" transparent opacity={.07} side={THREE.BackSide} />
+      </mesh>
+    </group>
   )
 }
 
@@ -127,10 +192,13 @@ function Scene({ asteroid, asteroids, selectedId, autoRotate }: AsteroidVisualiz
   const demo = useMemo(() => {
     if (list) return list
     return [
-      { id: 'demo-1', name: 'Demo A', diameter: 40, velocity: 12, distance: 2000000, hazardLevel: 'low' as const, is_potentially_hazardous_asteroid: false, estimatedDiameter: { kilometers: { estimated_diameter_min: 30, estimated_diameter_max: 40 } }, close_approach_data: [] },
-      { id: 'demo-2', name: 'Demo B', diameter: 70, velocity: 18, distance: 5000000, hazardLevel: 'medium' as const, is_potentially_hazardous_asteroid: false, estimatedDiameter: { kilometers: { estimated_diameter_min: 60, estimated_diameter_max: 70 } }, close_approach_data: [] },
-      { id: 'demo-3', name: 'Demo C', diameter: 120, velocity: 25, distance: 12000000, hazardLevel: 'high' as const, is_potentially_hazardous_asteroid: true, estimatedDiameter: { kilometers: { estimated_diameter_min: 100, estimated_diameter_max: 120 } }, close_approach_data: [] },
-      { id: 'demo-4', name: 'Demo D', diameter: 30, velocity: 10, distance: 8000000, hazardLevel: 'low' as const, is_potentially_hazardous_asteroid: false, estimatedDiameter: { kilometers: { estimated_diameter_min: 20, estimated_diameter_max: 30 } }, close_approach_data: [] },
+      { id: 'sample-apophis', name: 'Apophis', diameter: 40, velocity: 12, distance: 2000000, hazardLevel: 'low' as const, is_potentially_hazardous_asteroid: false, estimatedDiameter: { kilometers: { estimated_diameter_min: 30, estimated_diameter_max: 40 } }, close_approach_data: [] },
+      { id: 'sample-bennu', name: 'Bennu', diameter: 70, velocity: 18, distance: 5000000, hazardLevel: 'medium' as const, is_potentially_hazardous_asteroid: false, estimatedDiameter: { kilometers: { estimated_diameter_min: 60, estimated_diameter_max: 70 } }, close_approach_data: [] },
+      { id: 'sample-eros', name: 'Eros', diameter: 120, velocity: 25, distance: 12000000, hazardLevel: 'high' as const, is_potentially_hazardous_asteroid: true, estimatedDiameter: { kilometers: { estimated_diameter_min: 100, estimated_diameter_max: 120 } }, close_approach_data: [] },
+      { id: 'sample-ryugu', name: 'Ryugu', diameter: 30, velocity: 10, distance: 8000000, hazardLevel: 'low' as const, is_potentially_hazardous_asteroid: false, estimatedDiameter: { kilometers: { estimated_diameter_min: 20, estimated_diameter_max: 30 } }, close_approach_data: [] },
+      { id: 'sample-ida', name: 'Ida', diameter: 52, velocity: 16, distance: 6400000, hazardLevel: 'medium' as const, is_potentially_hazardous_asteroid: false, estimatedDiameter: { kilometers: { estimated_diameter_min: 42, estimated_diameter_max: 52 } }, close_approach_data: [] },
+      { id: 'sample-itokawa', name: 'Itokawa', diameter: 24, velocity: 11, distance: 3600000, hazardLevel: 'low' as const, is_potentially_hazardous_asteroid: false, estimatedDiameter: { kilometers: { estimated_diameter_min: 16, estimated_diameter_max: 24 } }, close_approach_data: [] },
+      { id: 'sample-didymos', name: 'Didymos', diameter: 96, velocity: 22, distance: 10500000, hazardLevel: 'high' as const, is_potentially_hazardous_asteroid: true, estimatedDiameter: { kilometers: { estimated_diameter_min: 80, estimated_diameter_max: 96 } }, close_approach_data: [] },
     ]
   }, [list])
 
@@ -156,17 +224,13 @@ function Scene({ asteroid, asteroids, selectedId, autoRotate }: AsteroidVisualiz
       <Stars radius={100} depth={50} count={1000} factor={4} />
 
       {/* Lighting */}
-      <ambientLight intensity={0.5} />
-      <pointLight position={[10, 10, 10]} intensity={1} />
-      <pointLight position={[-10, -10, -10]} intensity={0.3} />
+      <ambientLight intensity={0.92} />
+      <pointLight position={[8, 5, 7]} intensity={3.35} color="#fff4d5" />
+      <pointLight position={[-8, -3, -6]} intensity={0.4} color="#74b9e2" />
 
       {/* Earth in center */}
       <group position={[0, 0, 0]}>
         <Earth />
-        <mesh position={[0, 0, 0]}>
-          <sphereGeometry args={[1.02, 64, 64]} />
-          <meshBasicMaterial wireframe color="#00FFFF" transparent opacity={0.2} />
-        </mesh>
       </group>
 
       {/* All asteroids */}

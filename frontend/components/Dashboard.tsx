@@ -11,6 +11,7 @@ import RiskAssessment from './RiskAssessment'
 import MetricsCard from './MetricsCard'
 import FloatingNavbar from './FloatingNavbar'
 import { Asteroid } from '@/types/asteroid'
+import { SiteFooter } from './SiteChrome'
 
 
 export default function Dashboard() {
@@ -141,7 +142,7 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen p-6 lg:p-8 relative pt-24">
+    <div className="app-surface min-h-screen p-6 lg:p-8 relative pt-24">
       {/* Enhanced Starfield Background */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         {/* Regular twinkling stars */}
@@ -180,7 +181,7 @@ export default function Dashboard() {
       {/* Floating Navbar */}
       <FloatingNavbar />
 
-      <div className="relative z-10 mt-4 md:mt-16">
+      <div className="relative z-10 mx-auto mt-4 max-w-[1216px] md:mt-16">
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-4">
@@ -359,6 +360,7 @@ export default function Dashboard() {
           </div>
         )}
       </div>
+      <div className="mt-20 -mx-6 lg:-mx-8"><SiteFooter /></div>
     </div >
   )
 }

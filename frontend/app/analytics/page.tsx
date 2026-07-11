@@ -12,6 +12,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart'
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts'
+import { SiteFooter } from '@/components/SiteChrome'
 
 const formatDayLabel = (date: Date) =>
   date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
@@ -191,7 +192,7 @@ export default function AnalyticsPage() {
     : 'N/A'
 
   return (
-    <div className="min-h-screen relative overflow-hidden bg-gradient-to-b from-background via-background to-slate-950/40 p-6 lg:p-8 pt-24">
+    <div className="app-surface min-h-screen relative overflow-hidden p-6 lg:p-8 pt-24">
       <FloatingNavbar />
 
       <div className="pointer-events-none absolute inset-0">
@@ -200,7 +201,7 @@ export default function AnalyticsPage() {
         <div className="absolute bottom-0 right-1/3 h-56 w-56 rounded-full bg-accent/10 blur-3xl" />
       </div>
 
-      <div className="relative z-10 space-y-8">
+      <div className="relative z-10 mx-auto max-w-[1216px] space-y-8">
         <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
           <div>
             <h1 className="text-4xl font-bold text-white mb-2">
@@ -391,6 +392,7 @@ export default function AnalyticsPage() {
           </CardContent>
         </Card>
       </div>
+      <div className="mt-20 -mx-6 lg:-mx-8"><SiteFooter /></div>
     </div>
   )
 }
