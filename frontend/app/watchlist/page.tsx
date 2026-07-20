@@ -128,10 +128,10 @@ export default function WatchlistPage() {
         <div className="mb-8">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-4xl font-bold text-white mb-2">
+              <h1 className="text-4xl font-bold text-foreground mb-2">
                 Watchlist Control
               </h1>
-              <p className="text-slate-300">Track high-interest objects and response readiness.</p>
+              <p className="text-muted-foreground">Track high-interest objects and response readiness.</p>
             </div>
           </div>
         </div>

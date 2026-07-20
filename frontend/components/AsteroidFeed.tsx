@@ -56,7 +56,7 @@ export default function AsteroidFeed({
   }
 
   return (
-    <Card className="border-primary/20 bg-card/40 backdrop-blur">
+    <Card className="border-primary/20 bg-card/60 backdrop-blur">
       <CardHeader>
         <CardTitle className="text-xl">NEO Feed</CardTitle>
         <CardDescription>Browse and monitor near-Earth objects</CardDescription>

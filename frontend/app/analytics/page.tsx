@@ -204,10 +204,10 @@ export default function AnalyticsPage() {
       <div className="relative z-10 mx-auto max-w-[1216px] space-y-8">
         <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
           <div>
-            <h1 className="text-4xl font-bold text-white mb-2">
+            <h1 className="text-4xl font-bold text-foreground mb-2">
               Analytics
             </h1>
-            <p className="text-slate-300">Live telemetry and approach risk distribution.</p>
+            <p className="text-muted-foreground">Live telemetry and approach risk distribution.</p>
           </div>
           <div className="flex flex-wrap gap-3">
             <Button
